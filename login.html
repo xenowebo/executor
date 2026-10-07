@@ -145,28 +145,6 @@
     }
     .submit-button:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 12px 30px rgba(139,92,246,.35); }
     .submit-button:active { transform: translateY(0); }
-    .google-button {
-      display: flex;
-      width: 100%;
-      min-height: 48px;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 12px;
-      background: rgba(7, 8, 19, .35);
-      color: #f6f5ff;
-      font: inherit;
-      font-size: 14px;
-      font-weight: 650;
-      cursor: pointer;
-      transition: background .2s, border-color .2s;
-    }
-    .google-button:hover { border-color: rgba(255,255,255,.38); background: rgba(255,255,255,.08); }
-    .google-button:disabled { opacity: .65; cursor: wait; }
-    .google-icon { color: #8ab4f8; font-size: 17px; font-weight: 800; }
-    .auth-divider { display: flex; align-items: center; gap: 12px; margin: 17px 0; color: #89899f; font-size: 11px; }
-    .auth-divider::before, .auth-divider::after { content: ""; height: 1px; flex: 1; background: var(--line); }
     .message { display: none; padding: 12px 14px; border: 1px solid rgba(74,222,128,.3); border-radius: 11px; background: rgba(34,197,94,.1); color: #bbf7d0; font-size: 13px; line-height: 1.5; }
     .message.visible { display: block; }
     .error-message { margin: -5px 0 0; color: #fda4af; font-size: 12px; }
@@ -190,11 +168,6 @@
     <p class="intro">Log in to continue to your account.</p>
 
     <div id="success-message" class="message" role="status" aria-live="polite"></div>
-    <button class="google-button" id="google-login-button" type="button">
-      <span class="google-icon" aria-hidden="true">G</span>
-      Continue with Google
-    </button>
-    <div class="auth-divider" aria-hidden="true">or log in with email</div>
     <form id="login-form">
       <div class="field">
         <label for="email">Email address</label>
@@ -219,15 +192,12 @@
       <p class="error-message" id="form-error" role="alert" hidden></p>
       <button class="submit-button" type="submit">Log in</button>
     </form>
-    <p class="signup">Don’t have an account? <a href="./sign-up.html">Create an account</a></p>
+    <p class="signup">Don’t have an account? <a href="sign-up.html">Create an account</a></p>
     <a class="back-home" href="index.html">← Back to home</a>
   </main>
 
   <script>
-    const form = document.getElementById('login-form');
     const password = document.getElementById('password');
-    const errorMessage = document.getElementById('form-error');
-    const successMessage = document.getElementById('success-message');
     const showPasswordButton = document.querySelector('.show-password');
 
     showPasswordButton.addEventListener('click', () => {
@@ -242,16 +212,7 @@
   </script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import {
-      browserLocalPersistence,
-      getAuth,
-      getRedirectResult,
-      GoogleAuthProvider,
-      onAuthStateChanged,
-      setPersistence,
-      signInWithEmailAndPassword,
-      signInWithRedirect
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAEpolGgoosGDg-Wf2o849HHl4jm1-Ngyc",
@@ -264,93 +225,32 @@
     };
 
     const auth = getAuth(initializeApp(firebaseConfig));
-    const authReady = setPersistence(auth, browserLocalPersistence);
-    const loginForm = document.getElementById('login-form');
-    const loginError = document.getElementById('form-error');
-    const loginSuccess = document.getElementById('success-message');
-    const loginButton = loginForm.querySelector('[type="submit"]');
-    const emailInput = document.getElementById('email');
-    const loginPassword = document.getElementById('password');
-    const googleLoginButton = document.getElementById('google-login-button');
+    const passwordInput = document.getElementById("password");
+    const passwordToggle = document.querySelector(".show-password");
+    const loginForm = document.getElementById("login-form");
+    const loginError = document.getElementById("form-error");
+    const loginSuccess = document.getElementById("success-message");
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        loginSuccess.textContent = `You're logged in as ${user.displayName || user.email}.`;
-        loginSuccess.classList.add('visible');
-      } else {
-        loginSuccess.classList.remove('visible');
-      }
-    });
-
-    googleLoginButton.addEventListener('click', async () => {
-      loginError.hidden = true;
-      loginSuccess.classList.remove('visible');
-      googleLoginButton.disabled = true;
-      googleLoginButton.textContent = 'Redirecting to Google…';
-
-      try {
-        await authReady;
-        await signInWithRedirect(auth, new GoogleAuthProvider());
-      } catch (error) {
-        const messages = {
-          'auth/account-exists-with-different-credential': 'An account already exists with this email using a different sign-in method.',
-          'auth/operation-not-allowed': 'Google sign-in is not enabled for this Firebase project.',
-          'auth/network-request-failed': 'Network error. Check your connection and try again.'
-        };
-        loginError.textContent = messages[error.code] || 'Google login failed. Please try again.';
-        loginError.hidden = false;
-        googleLoginButton.disabled = false;
-        googleLoginButton.innerHTML = '<span class="google-icon" aria-hidden="true">G</span>Continue with Google';
-      }
-    });
-
-    authReady.then(() => getRedirectResult(auth)).then((result) => {
-      if (result) {
-        loginSuccess.textContent = `You are signed in as ${result.user.email}.`;
-        loginSuccess.classList.add('visible');
-      }
-    }).catch((error) => {
-      loginError.textContent = error.code === 'auth/operation-not-allowed'
-        ? 'Google sign-in is not enabled for this Firebase project.'
-        : 'Google login failed. Please try again.';
-      loginError.hidden = false;
-    });
-
-    loginForm.addEventListener('submit', async (event) => {
+    loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       loginError.hidden = true;
-      loginSuccess.classList.remove('visible');
-      loginButton.disabled = true;
-      loginButton.textContent = 'Logging in…';
+      loginSuccess.classList.remove("visible");
+
+      const email = document.getElementById("email").value.trim();
+      const passwordValue = document.getElementById("password").value;
 
       try {
-        await authReady;
-        const credential = await signInWithEmailAndPassword(
-          auth,
-          emailInput.value.trim(),
-          loginPassword.value
-        );
-        loginSuccess.textContent = `You are signed in as ${credential.user.email}.`;
-        loginSuccess.classList.add('visible');
+        await signInWithEmailAndPassword(auth, email, passwordValue);
+        loginSuccess.textContent = "You are signed in successfully.";
+        loginSuccess.classList.add("visible");
         loginForm.reset();
-        loginPassword.type = 'password';
-        showPasswordButton.textContent = 'Show';
-        showPasswordButton.setAttribute('aria-label', 'Show password');
-        showPasswordButton.setAttribute('aria-pressed', 'false');
+        passwordInput.type = "password";
+        passwordToggle.textContent = "Show";
+        passwordToggle.setAttribute("aria-label", "Show password");
+        passwordToggle.setAttribute("aria-pressed", "false");
       } catch (error) {
-        const messages = {
-          'auth/invalid-credential': 'Email or password is incorrect. Check your details and try again.',
-          'auth/user-not-found': 'No account was found for that email. Create an account first.',
-          'auth/wrong-password': 'Email or password is incorrect. Check your details and try again.',
-          'auth/too-many-requests': 'Too many attempts. Wait a little and try again.',
-          'auth/operation-not-allowed': 'Email/password sign-in is not enabled for this Firebase project.',
-          'auth/network-request-failed': 'Network error. Check your connection and try again.'
-        };
-        loginError.textContent = messages[error.code] || 'We could not log you in. Please try again.';
+        loginError.textContent = error.message;
         loginError.hidden = false;
-      } finally {
-        loginButton.disabled = false;
-        loginButton.textContent = 'Log in';
       }
     });
   </script>
