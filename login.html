@@ -197,7 +197,7 @@ permalink: /login/
       <button class="submit-button" type="submit">Log in</button>
     </form>
     <p class="signup">Don’t have an account? <a href="../sign-up/">Create an account</a></p>
-    <a class="back-home" href="../">← Back to home</a>
+    <a class="back-home" href="./">← Back to home</a>
   </main>
 
   <script>
@@ -258,7 +258,7 @@ permalink: /login/
         }
 
         await signInWithEmailAndPassword(auth, email, passwordValue);
-        window.location.assign("./");
+        window.location.assign("../");
       } catch (error) {
         loginError.textContent = error.message;
         loginError.hidden = false;
