@@ -87,6 +87,15 @@ button, a {
   gap: 8px;
 }
 
+#accountStatus {
+  color: #d4d7e4;
+  font-size: 13px;
+}
+
+.nav .button[hidden] {
+  display: none;
+}
+
 .nav a:not(.button) {
   padding: 9px 13px;
   color: #d4d7e4;
@@ -94,23 +103,9 @@ button, a {
   transition: color .2s ease;
 }
 
-  .nav a:not(.button):hover {
+.nav a:not(.button):hover {
   color: #fff;
 }
-
-.account-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 12px;
-  border: 1px solid rgba(128, 240, 194, .25);
-  border-radius: 999px;
-  background: rgba(128, 240, 194, .08);
-  color: #baf5dc;
-  font-size: 12px;
-}
-
-.account-status[hidden] { display: none; }
 
 .button {
   display: inline-flex;
@@ -562,10 +557,11 @@ footer a:hover {
         <a href="#home">Home</a>
         <a href="#features">Features</a>
         <a href="#faq">FAQ</a>
-        <span class="account-status" id="accountStatus" role="status" aria-live="polite" hidden></span>
 
-        <!-- Sign Up button -->
-        <a class="button" href="sign-up.html">
+        <span id="accountStatus" aria-live="polite">Checking account…</span>
+        <a class="button" id="accountLink" href="login.html">Log in</a>
+        <button class="button" id="logoutButton" type="button" hidden>Log out</button>
+        <a class="button" id="signupLink" href="sign-up.html">
           Sign Up <span aria-hidden="true">↗</span>
         </a>
       </nav>
@@ -733,7 +729,6 @@ const EXECUTOR_DESCRIPTION =
   "A refined, dependable execution experience—built for speed, clarity, and complete control of your workflow.";
 
 const DOWNLOAD_URL = "https://example.com/download";
-
 document.title = `${EXECUTOR_NAME} — Executor`;
 
 document.getElementById("executorName").textContent = EXECUTOR_NAME;
@@ -754,10 +749,10 @@ document.getElementById("year").textContent =
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyAEpolGgoosGDw-Gf2o849HHl4jm1-Ngyc",
+      apiKey: "AIzaSyAEpolGgoosGDg-Wf2o849HHl4jm1-Ngyc",
       authDomain: "xen0-executor.firebaseapp.com",
       projectId: "xen0-executor",
       storageBucket: "xen0-executor.firebasestorage.app",
@@ -768,14 +763,29 @@ document.getElementById("year").textContent =
 
     const auth = getAuth(initializeApp(firebaseConfig));
     const accountStatus = document.getElementById("accountStatus");
+    const accountLink = document.getElementById("accountLink");
+    const logoutButton = document.getElementById("logoutButton");
+    const signupLink = document.getElementById("signupLink");
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        accountStatus.textContent = `Logged in as ${user.displayName || user.email || "your account"}`;
-        accountStatus.hidden = false;
+        accountStatus.textContent = `Logged in as ${user.displayName || user.email}`;
+        accountLink.hidden = true;
+        logoutButton.hidden = false;
+        signupLink.hidden = true;
       } else {
-        accountStatus.hidden = true;
-        accountStatus.textContent = "";
+        accountStatus.textContent = "Not logged in";
+        accountLink.hidden = false;
+        logoutButton.hidden = true;
+        signupLink.hidden = false;
+      }
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+      } catch (error) {
+        accountStatus.textContent = error.message;
       }
     });
   </script>
