@@ -180,6 +180,11 @@ permalink: /sign-up/
         <input id="name" name="name" type="text" placeholder="Jordan Lee" autocomplete="name" minlength="2" required>
       </div>
       <div class="field">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" placeholder="jordanlee" autocomplete="username" minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" title="Use 3–20 letters, numbers, or underscores." required>
+        <p class="hint">Use 3–20 letters, numbers, or underscores. Usernames are case-insensitive.</p>
+      </div>
+      <div class="field">
         <label for="email">Email address</label>
         <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
       </div>
@@ -210,7 +215,7 @@ permalink: /sign-up/
       <button class="submit-button" type="submit">Create account</button>
     </form>
     <p class="login">Already have an account? <a href="../login/">Log in</a></p>
-    <a class="back-home" href="../">← Back to home</a>
+    <a class="back-home" href="./">← Back to home</a>
   </main>
 
   <script>
@@ -252,7 +257,8 @@ permalink: /sign-up/
   </script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile, deleteUser } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getFirestore, doc, runTransaction } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAEpolGgoosGDg-Wf2o849HHl4jm1-Ngyc",
@@ -264,7 +270,9 @@ permalink: /sign-up/
       measurementId: "G-M7CFMPL88L"
     };
 
-    const auth = getAuth(initializeApp(firebaseConfig));
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
     const signupForm = document.getElementById("signup-form");
     const signupPassword = document.getElementById("password");
     const signupConfirmPassword = document.getElementById("confirm-password");
@@ -285,17 +293,36 @@ permalink: /sign-up/
 
       const name = document.getElementById("name").value.trim();
       const email = document.getElementById("email").value.trim();
+      const username = document.getElementById("username").value.trim().toLowerCase();
+      let credential;
 
       try {
-        const credential = await createUserWithEmailAndPassword(auth, email, signupPassword.value);
+        credential = await createUserWithEmailAndPassword(auth, email, signupPassword.value);
         await updateProfile(credential.user, { displayName: name });
-        signupSuccess.textContent = `Thanks, ${name}! Your Firebase account has been created and you are signed in.`;
+
+        await runTransaction(db, async (transaction) => {
+          const usernameRef = doc(db, "usernames", username);
+          const usernameDoc = await transaction.get(usernameRef);
+          if (usernameDoc.exists()) {
+            throw new Error("That username is already taken. Please choose another.");
+          }
+          transaction.set(usernameRef, { uid: credential.user.uid, username, email });
+        });
+
+        signupSuccess.textContent = `Thanks, ${name}! Your account has been created and you are signed in.`;
         signupSuccess.classList.add("visible");
         signupForm.reset();
         document.getElementById("strength-fill").style.width = "0%";
         document.getElementById("strength-label").textContent = "Strength";
         signupSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
       } catch (error) {
+        if (credential?.user) {
+          try {
+            await deleteUser(credential.user);
+          } catch (cleanupError) {
+            console.error("Could not clean up the incomplete account:", cleanupError);
+          }
+        }
         signupError.textContent = error.message;
         signupError.hidden = false;
       }
