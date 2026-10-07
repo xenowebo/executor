@@ -174,8 +174,8 @@ permalink: /login/
     <div id="success-message" class="message" role="status" aria-live="polite"></div>
     <form id="login-form">
       <div class="field">
-        <label for="email">Email address</label>
-        <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required>
+        <label for="login-identifier">Email or username</label>
+        <input id="login-identifier" name="identifier" type="text" placeholder="you@example.com or username" autocomplete="username" required>
       </div>
       <div class="field">
         <div class="label-row">
@@ -197,7 +197,7 @@ permalink: /login/
       <button class="submit-button" type="submit">Log in</button>
     </form>
     <p class="signup">Don’t have an account? <a href="../sign-up/">Create an account</a></p>
-    <a class="back-home" href="../">← Back to home</a>
+    <a class="back-home" href="./">← Back to home</a>
   </main>
 
   <script>
@@ -217,6 +217,7 @@ permalink: /login/
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAEpolGgoosGDg-Wf2o849HHl4jm1-Ngyc",
@@ -228,7 +229,9 @@ permalink: /login/
       measurementId: "G-M7CFMPL88L"
     };
 
-    const auth = getAuth(initializeApp(firebaseConfig));
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
     const passwordInput = document.getElementById("password");
     const passwordToggle = document.querySelector(".show-password");
     const loginForm = document.getElementById("login-form");
@@ -240,12 +243,22 @@ permalink: /login/
       loginError.hidden = true;
       loginSuccess.classList.remove("visible");
 
-      const email = document.getElementById("email").value.trim();
+      const identifier = document.getElementById("login-identifier").value.trim();
       const passwordValue = document.getElementById("password").value;
 
       try {
+        let email = identifier;
+        if (!identifier.includes("@")) {
+          const username = identifier.toLowerCase();
+          const usernameSnapshot = await getDoc(doc(db, "usernames", username));
+          if (!usernameSnapshot.exists() || !usernameSnapshot.data().email) {
+            throw new Error("No account was found for that email or username.");
+          }
+          email = usernameSnapshot.data().email;
+        }
+
         await signInWithEmailAndPassword(auth, email, passwordValue);
-        window.location.assign("../");
+        window.location.assign("./");
       } catch (error) {
         loginError.textContent = error.message;
         loginError.hidden = false;
