@@ -151,28 +151,6 @@
     }
     .submit-button:hover { transform: translateY(-2px); filter: brightness(1.08); box-shadow: 0 12px 30px rgba(139,92,246,.35); }
     .submit-button:active { transform: translateY(0); }
-    .google-button {
-      display: flex;
-      width: 100%;
-      min-height: 48px;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: 1px solid rgba(255,255,255,.18);
-      border-radius: 12px;
-      background: rgba(7, 8, 19, .35);
-      color: #f6f5ff;
-      font: inherit;
-      font-size: 14px;
-      font-weight: 650;
-      cursor: pointer;
-      transition: background .2s, border-color .2s;
-    }
-    .google-button:hover { border-color: rgba(255,255,255,.38); background: rgba(255,255,255,.08); }
-    .google-button:disabled { opacity: .65; cursor: wait; }
-    .google-icon { color: #8ab4f8; font-size: 17px; font-weight: 800; }
-    .auth-divider { display: flex; align-items: center; gap: 12px; margin: 17px 0; color: #89899f; font-size: 11px; }
-    .auth-divider::before, .auth-divider::after { content: ""; height: 1px; flex: 1; background: var(--line); }
     .login { margin: 23px 0 0; color: var(--muted); font-size: 13px; text-align: center; }
     .message { display: none; padding: 12px 14px; border: 1px solid rgba(74,222,128,.3); border-radius: 11px; background: rgba(34,197,94,.1); color: #bbf7d0; font-size: 13px; line-height: 1.5; }
     .message.visible { display: block; }
@@ -190,11 +168,6 @@
     <p class="intro">Join us today. It only takes a minute to get started.</p>
 
     <div id="success-message" class="message" role="status" aria-live="polite"></div>
-    <button class="google-button" id="google-signup-button" type="button">
-      <span class="google-icon" aria-hidden="true">G</span>
-      Continue with Google
-    </button>
-    <div class="auth-divider" aria-hidden="true">or sign up with email</div>
     <form id="signup-form">
       <div class="field">
         <label for="name">Full name</label>
@@ -230,15 +203,11 @@
       </div>
       <button class="submit-button" type="submit">Create account</button>
     </form>
-    <p class="login">Already have an account? <a href="./login.html">Log in</a></p>
+    <p class="login">Already have an account? <a href="login.html">Log in</a></p>
   </main>
 
   <script>
-    const form = document.getElementById('signup-form');
     const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirm-password');
-    const errorMessage = document.getElementById('form-error');
-    const successMessage = document.getElementById('success-message');
     const strengthFill = document.getElementById('strength-fill');
     const strengthLabel = document.getElementById('strength-label');
 
@@ -276,17 +245,7 @@
   </script>
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import {
-      browserLocalPersistence,
-      createUserWithEmailAndPassword,
-      getAuth,
-      getRedirectResult,
-      GoogleAuthProvider,
-      onAuthStateChanged,
-      setPersistence,
-      signInWithRedirect,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+    import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAEpolGgoosGDg-Wf2o849HHl4jm1-Ngyc",
@@ -299,116 +258,39 @@
     };
 
     const auth = getAuth(initializeApp(firebaseConfig));
-    const authReady = setPersistence(auth, browserLocalPersistence);
-    const signupForm = document.getElementById('signup-form');
-    const signupError = document.getElementById('form-error');
-    const signupSuccess = document.getElementById('success-message');
-    const signupButton = signupForm.querySelector('[type="submit"]');
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const signupPassword = document.getElementById('password');
-    const confirmInput = document.getElementById('confirm-password');
-    const strengthFill = document.getElementById('strength-fill');
-    const strengthLabel = document.getElementById('strength-label');
-    const googleSignupButton = document.getElementById('google-signup-button');
+    const signupForm = document.getElementById("signup-form");
+    const signupPassword = document.getElementById("password");
+    const signupConfirmPassword = document.getElementById("confirm-password");
+    const signupError = document.getElementById("form-error");
+    const signupSuccess = document.getElementById("success-message");
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        signupSuccess.textContent = `You're logged in as ${user.displayName || user.email}.`;
-        signupSuccess.classList.add('visible');
-      } else {
-        signupSuccess.classList.remove('visible');
-      }
-    });
-
-    function googleAuthErrorMessage(error) {
-      const messages = {
-        'auth/account-exists-with-different-credential': 'An account already exists with this email using a different sign-in method.',
-        'auth/operation-not-allowed': 'Google sign-in is not enabled for this Firebase project. Enable Google in Firebase Authentication sign-in providers.',
-        'auth/unauthorized-domain': 'This site domain is not authorized. Add the current domain under Firebase Authentication → Settings → Authorized domains.',
-        'auth/network-request-failed': 'Network error. Check your connection and try again.',
-        'auth/web-storage-unsupported': 'Your browser is blocking the storage required for Google sign-in. Allow cookies/site storage and try again.',
-        'auth/redirect-cancelled-by-user': 'Google sign-in was cancelled. Please try again.'
-      };
-      return messages[error.code] || `Google sign-up failed (${error.code || 'unknown error'}). ${error.message || 'Check the Firebase configuration and authorized domain.'}`;
-    }
-
-    googleSignupButton.addEventListener('click', async () => {
-      signupError.hidden = true;
-      signupSuccess.classList.remove('visible');
-
-      if (!document.getElementById('terms').checked) {
-        signupError.textContent = 'Please agree to the Terms of Service and Privacy Policy to continue.';
-        signupError.hidden = false;
-        document.getElementById('terms').focus();
-        return;
-      }
-
-      googleSignupButton.disabled = true;
-      googleSignupButton.textContent = 'Redirecting to Google…';
-
-      try {
-        await authReady;
-        await signInWithRedirect(auth, new GoogleAuthProvider());
-      } catch (error) {
-        signupError.textContent = googleAuthErrorMessage(error);
-        signupError.hidden = false;
-        googleSignupButton.disabled = false;
-        googleSignupButton.innerHTML = '<span class="google-icon" aria-hidden="true">G</span>Continue with Google';
-      }
-    });
-
-    authReady.then(() => getRedirectResult(auth)).then((result) => {
-      if (result) {
-        signupSuccess.textContent = `Account ready for ${result.user.displayName || result.user.email}. You are now signed in.`;
-        signupSuccess.classList.add('visible');
-      }
-    }).catch((error) => {
-      signupError.textContent = googleAuthErrorMessage(error);
-      signupError.hidden = false;
-    });
-
-    signupForm.addEventListener('submit', async (event) => {
+    signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       signupError.hidden = true;
-      signupSuccess.classList.remove('visible');
+      signupSuccess.classList.remove("visible");
 
-      if (signupPassword.value !== confirmInput.value) {
-        signupError.textContent = 'Your passwords do not match. Please check and try again.';
+      if (signupPassword.value !== signupConfirmPassword.value) {
+        signupError.textContent = "Your passwords do not match. Please check and try again.";
         signupError.hidden = false;
-        confirmInput.focus();
+        signupConfirmPassword.focus();
         return;
       }
 
-      signupButton.disabled = true;
-      signupButton.textContent = 'Creating account…';
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
 
       try {
-        await authReady;
-        const credential = await createUserWithEmailAndPassword(
-          auth,
-          emailInput.value.trim(),
-          signupPassword.value
-        );
-        await updateProfile(credential.user, { displayName: nameInput.value.trim() });
-        signupSuccess.textContent = `Account created for ${nameInput.value.trim()}. You are now signed in.`;
-        signupSuccess.classList.add('visible');
+        const credential = await createUserWithEmailAndPassword(auth, email, signupPassword.value);
+        await updateProfile(credential.user, { displayName: name });
+        signupSuccess.textContent = `Thanks, ${name}! Your Firebase account has been created and you are signed in.`;
+        signupSuccess.classList.add("visible");
         signupForm.reset();
-        strengthFill.style.width = '0%';
-        strengthLabel.textContent = 'Strength';
+        document.getElementById("strength-fill").style.width = "0%";
+        document.getElementById("strength-label").textContent = "Strength";
+        signupSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
       } catch (error) {
-        const messages = {
-          'auth/email-already-in-use': 'An account with this email already exists. Try logging in instead.',
-          'auth/weak-password': 'Choose a stronger password (at least 6 characters).',
-          'auth/invalid-email': 'Enter a valid email address.',
-          'auth/operation-not-allowed': 'Email/password sign-in is not enabled for this Firebase project.',
-          'auth/network-request-failed': 'Network error. Check your connection and try again.'
-        };
-        signupError.textContent = messages[error.code] || 'We could not create your account. Please try again.';
+        signupError.textContent = error.message;
         signupError.hidden = false;
-      } finally {
-        signupButton.disabled = false;
-        signupButton.textContent = 'Create account';
       }
     });
   </script>
