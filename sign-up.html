@@ -309,12 +309,7 @@ permalink: /sign-up/
           transaction.set(usernameRef, { uid: credential.user.uid, username, email });
         });
 
-        signupSuccess.textContent = `Thanks, ${name}! Your account has been created and you are signed in.`;
-        signupSuccess.classList.add("visible");
-        signupForm.reset();
-        document.getElementById("strength-fill").style.width = "0%";
-        document.getElementById("strength-label").textContent = "Strength";
-        signupSuccess.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        window.location.assign("../");
       } catch (error) {
         if (credential?.user) {
           try {
