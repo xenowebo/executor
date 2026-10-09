@@ -237,6 +237,11 @@ permalink: /login/
     const loginForm = document.getElementById("login-form");
     const loginError = document.getElementById("form-error");
     const loginSuccess = document.getElementById("success-message");
+    const requestedDestination = new URLSearchParams(window.location.search).get("next");
+    const safeDestination = requestedDestination && requestedDestination.startsWith("/") && !requestedDestination.startsWith("//")
+      ? requestedDestination
+      : "../";
+    document.querySelector(".signup a").href = `../sign-up/?next=${encodeURIComponent(safeDestination)}`;
 
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -258,7 +263,7 @@ permalink: /login/
         }
 
         await signInWithEmailAndPassword(auth, email, passwordValue);
-        window.location.assign("../");
+        window.location.assign(safeDestination);
       } catch (error) {
         loginError.textContent = error.message;
         loginError.hidden = false;
