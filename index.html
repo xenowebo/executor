@@ -769,11 +769,11 @@ document.getElementById("year").textContent =
     const downloadButton = document.getElementById("downloadButton");
 
     downloadButton.addEventListener("click", () => {
-      const destination = "/download/";
+      const destination = "/u/download/";
       if (auth.currentUser) {
         window.location.assign(destination);
       } else {
-        window.location.assign(`/login/?next=${encodeURIComponent(destination)}`);
+        window.location.assign(`login/?next=${encodeURIComponent(destination)}`);
       }
     });
 
