@@ -215,7 +215,7 @@ permalink: /sign-up/
       <button class="submit-button" type="submit">Create account</button>
     </form>
     <p class="login">Already have an account? <a href="../login/">Log in</a></p>
-    <a class="back-home" href="../">← Back to home</a>
+    <a class="back-home" href="./">← Back to home</a>
   </main>
 
   <script>
@@ -278,6 +278,11 @@ permalink: /sign-up/
     const signupConfirmPassword = document.getElementById("confirm-password");
     const signupError = document.getElementById("form-error");
     const signupSuccess = document.getElementById("success-message");
+    const requestedDestination = new URLSearchParams(window.location.search).get("next");
+    const safeDestination = requestedDestination && requestedDestination.startsWith("/") && !requestedDestination.startsWith("//")
+      ? requestedDestination
+      : "../";
+    document.querySelector(".login a").href = `../login/?next=${encodeURIComponent(safeDestination)}`;
 
     signupForm.addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -309,7 +314,7 @@ permalink: /sign-up/
           transaction.set(usernameRef, { uid: credential.user.uid, username, email });
         });
 
-        window.location.assign("../");
+        window.location.assign(safeDestination);
       } catch (error) {
         if (credential?.user) {
           try {
