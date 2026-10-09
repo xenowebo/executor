@@ -6,105 +6,211 @@ permalink: /download/
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#090b16">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' fill='%23fff'%3E%26%2310023;%3C/text%3E%3C/svg%3E">
-  <meta name="description" content="Xen0 Executor is not released yet.">
-  <title>Not Released Yet — Xen0 Executor</title>
+  <meta name="theme-color" content="#090b14">
+  <meta name="description" content="Preview Xen0 Executor and get the download from Discord.">
+  <title>Download Xen0 Executor</title>
   <style>
     :root {
       color-scheme: dark;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #090b16;
-      color: #f6f5ff;
-      font-synthesis: none;
-      text-rendering: optimizeLegibility;
-      -webkit-font-smoothing: antialiased;
-      --muted: #a5a5bd;
-      --line: rgba(255, 255, 255, .12);
+      color: #f5f7ff;
+      background: #090b14;
+      --muted: #a6adc4;
+      --border: rgba(255, 255, 255, .14);
+      --accent: #a99aff;
+      --cyan: #75e7f2;
     }
 
     * { box-sizing: border-box; }
 
     body {
+      min-width: 320px;
       min-height: 100vh;
       margin: 0;
-      display: grid;
-      place-items: center;
-      padding: 36px 18px;
-      overflow-x: hidden;
+      padding: 30px 24px;
       background:
-        radial-gradient(ellipse at 15% 20%, rgba(92, 58, 173, .32), transparent 40%),
-        radial-gradient(ellipse at 85% 78%, rgba(26, 127, 173, .20), transparent 38%),
-        linear-gradient(135deg, #090b16 0%, #111025 52%, #09131c 100%);
+        linear-gradient(135deg, rgba(6, 8, 17, .84), rgba(8, 9, 20, .67) 48%, rgba(10, 8, 24, .83)),
+        url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjWg3OTJTF1txKSR9DXBrl8sf_JmDsFTR6lGtiM_CRNg&s=10") center / cover fixed no-repeat,
+        #090b14;
+      color: #f5f7ff;
     }
 
-    .notice-card {
-      width: min(100%, 470px);
-      padding: clamp(28px, 6vw, 44px);
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: linear-gradient(145deg, rgba(255,255,255,.105), rgba(255,255,255,.045));
-      box-shadow: 0 28px 90px rgba(0, 0, 0, .42), inset 0 1px 0 rgba(255,255,255,.08);
-      backdrop-filter: blur(18px);
-      text-align: center;
-      animation: rise .7s cubic-bezier(.2,.75,.25,1) both;
-    }
-
+    a { color: inherit; text-decoration: none; }
+    .page-shell { width: min(1060px, 100%); margin: 0 auto; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 32px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-weight: 750; letter-spacing: .08em; }
     .brand-mark {
-      width: 44px;
-      height: 44px;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 25px;
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(167,139,250,.36), rgba(240,171,252,.13));
-      color: #fff;
-      font-size: 20px;
-      box-shadow: 0 8px 25px rgba(167,139,250,.17);
+      display: grid; width: 36px; height: 36px; place-items: center;
+      border: 1px solid rgba(255,255,255,.3); border-radius: 12px;
+      background: linear-gradient(145deg, rgba(169,154,255,.3), rgba(117,231,242,.1));
+      box-shadow: inset 0 1px rgba(255,255,255,.2), 0 0 24px rgba(169,154,255,.12);
     }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(28px, 5vw, 36px);
-      letter-spacing: -.04em;
-      line-height: 1.15;
-      background: linear-gradient(100deg, #c4b5fd, #f0abfc 60%, #93c5fd);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+    .back-link { color: #d4d7e4; font-size: 14px; }
+    .back-link:hover { color: #fff; }
+    .content { max-width: 920px; margin: 0 auto; }
+    .intro { margin: 0 0 24px; text-align: center; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 9px; margin-bottom: 13px;
+      padding: 7px 12px; border: 1px solid var(--border); border-radius: 999px;
+      background: rgba(255,255,255,.07); color: #d9d6ff; font-size: 11px;
+      font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
     }
-
-    p { margin: 13px 0 25px; color: var(--muted); font-size: 14px; line-height: 1.6; }
-
-    .back-home {
-      display: inline-flex;
-      min-height: 44px;
-      align-items: center;
-      justify-content: center;
-      padding: 0 18px;
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 12px;
-      background: rgba(255,255,255,.08);
-      color: #f6f5ff;
-      font: inherit;
-      font-size: 13px;
-      font-weight: 650;
-      cursor: pointer;
-      transition: background .2s, transform .2s;
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #80f0c2; box-shadow: 0 0 12px #80f0c2; }
+    h1 { margin: 0; font-size: clamp(2.1rem, 6vw, 3.5rem); line-height: 1.05; letter-spacing: -.065em; }
+    h1 span { background: linear-gradient(100deg, #fff 15%, #c6bcff 57%, #87eaf1 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .intro p { max-width: 570px; margin: 14px auto 0; color: #c4c8d8; font-size: 15px; }
+    .glass-panel {
+      border: 1px solid var(--border); border-radius: 24px; background: rgba(17, 20, 34, .72);
+      box-shadow: 0 24px 75px rgba(0,0,0,.3), inset 0 1px rgba(255,255,255,.09);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
     }
+    .preview-panel { padding: clamp(12px, 2.5vw, 22px); }
+    .preview-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px 14px; }
+    .preview-heading strong { font-size: 13px; }
+    .preview-heading span { color: var(--muted); font-size: 12px; }
+    .app-preview {
+      display: flex; min-height: 390px; overflow: hidden; border: 1px solid #393a3f;
+      border-radius: 10px; background: #151517; color: #f2f2f2;
+      box-shadow: 0 18px 50px rgba(0,0,0,.36); font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+    .sidebar { width: 148px; flex: 0 0 148px; padding: 14px 10px; border-right: 1px solid #35353a; background: #171719; }
+    .app-logo { display: grid; width: 29px; height: 29px; place-items: center; margin: 0 0 19px; border-radius: 7px; background: #0b0b0d; color: #ff41d0; font-size: 18px; }
+    .app-nav { display: grid; gap: 7px; }
+    .app-nav div { display: flex; align-items: center; gap: 10px; min-height: 37px; padding: 0 10px; border: 1px solid transparent; border-radius: 10px; color: #e7e7e9; font-size: 12px; }
+    .app-nav .active { border-color: #414147; background: #222225; }
+    .nav-icon { width: 16px; color: #f1f1f3; font-size: 15px; text-align: center; }
+    .workspace { min-width: 0; flex: 1; display: flex; flex-direction: column; }
+    .window-bar { height: 39px; display: flex; align-items: center; justify-content: flex-end; gap: 9px; padding: 0 12px; border-bottom: 1px solid #35353a; background: #19191b; }
+    .window-dot { width: 16px; height: 16px; border-radius: 50%; background: #252528; }
+    .tabbar { height: 39px; display: flex; align-items: center; border-bottom: 1px solid #35353a; background: #1b1b1d; }
+    .tab { display: flex; align-items: center; gap: 10px; height: 100%; padding: 0 15px; border-right: 1px solid #35353a; border-top: 1px solid #9b9ba0; color: #dadade; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; }
+    .tab-dot { width: 11px; height: 11px; border-radius: 50%; background: #a7a7aa; position: relative; }
+    .tab-dot::after { content: ""; position: absolute; top: -3px; right: -2px; width: 4px; height: 4px; border-radius: 50%; background: #d4d4d6; }
+    .tab-close { margin-left: 5px; color: #99999e; }
+    .editor { min-height: 0; flex: 1; padding: 12px 16px; background: #171719; color: #e6e6e8; font: 13px/1.8 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+    .line-number { display: inline-block; width: 26px; color: #929298; }
+    .code-fn { color: #79caff; }
+    .code-string { padding: 1px 3px; border-radius: 3px; background: #343b31; color: #a9cc8a; }
+    .cursor { display: inline-block; height: 17px; margin-left: 2px; border-left: 1px solid #eee; vertical-align: middle; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 7px; padding: 8px; border-top: 1px solid #35353a; background: #1a1a1c; }
+    .tool-button { min-width: 76px; padding: 6px 11px; border: 1px solid #414146; border-radius: 7px; background: #242427; color: #d8d8dc; font-size: 11px; text-align: center; }
+    .tool-button.attach { margin-left: auto; }
+    .download-panel { display: flex; align-items: center; justify-content: space-between; gap: 22px; margin-top: 20px; padding: 22px 25px; }
+    .section-kicker { margin: 0 0 5px; color: var(--cyan); font-size: 10px; font-weight: 750; letter-spacing: .16em; text-transform: uppercase; }
+    h2 { margin: 0; font-size: clamp(1.25rem, 3vw, 1.65rem); letter-spacing: -.04em; }
+    .download-copy { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .button {
+      display: inline-flex; min-height: 48px; flex-shrink: 0; align-items: center; justify-content: center; gap: 9px;
+      padding: 0 21px; border: 1px solid rgba(255,255,255,.8); border-radius: 14px;
+      background: linear-gradient(120deg, rgba(169,154,255,.32), rgba(117,231,242,.2));
+      box-shadow: 0 8px 32px rgba(112,96,220,.18), inset 0 1px rgba(255,255,255,.13);
+      color: #fff; font: inherit; font-size: 14px; font-weight: 650; cursor: pointer;
+      transition: transform .25s, background .25s, box-shadow .25s;
+    }
+    .button:hover, .button:focus-visible { transform: translateY(-2px) scale(1.035); background: #fff; color: #10111a; box-shadow: 0 0 18px rgba(255,255,255,.55); outline: none; }
+    .auth-check { width: fit-content; margin: 20vh auto; color: #c4c8d8; font-size: 14px; }
+    [hidden] { display: none !important; }
 
-    .back-home:hover { transform: translateY(-2px); background: rgba(255,255,255,.15); }
-    @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
+    @media (max-width: 620px) {
+      body { padding: 20px 16px; }
+      .topbar { margin-bottom: 24px; }
+      .app-preview { min-height: 310px; }
+      .sidebar { width: 112px; flex-basis: 112px; padding-inline: 7px; }
+      .app-nav div { gap: 6px; padding-inline: 7px; font-size: 11px; }
+      .download-panel { align-items: flex-start; flex-direction: column; padding: 20px; }
+      .download-panel .button { width: 100%; }
+    }
+    @media (max-width: 390px) {
+      .sidebar { width: 88px; flex-basis: 88px; }
+      .app-nav div { gap: 5px; padding-inline: 5px; font-size: 10px; }
+      .app-nav .nav-icon { width: 13px; }
+      .tool-button { min-width: 62px; padding-inline: 7px; }
+      .tab { padding-inline: 9px; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: .01ms !important; } }
   </style>
 </head>
 <body>
-  <main class="notice-card">
-    <div class="brand-mark" aria-hidden="true">&#10023;</div>
-    <h1>Not Released Yet</h1>
-    <p>Xen0 Executor isn’t available for download just yet. Please check back later.</p>
-    <button class="back-home" type="button" onclick="window.location.href='../'">← Back to home</button>
+  <div class="auth-check" id="authCheck" role="status" aria-live="polite">Checking your account…</div>
+  <main class="page-shell" id="downloadContent" hidden>
+    <header class="topbar">
+      <a class="brand" href="../" aria-label="Xen0 Executor home">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>XEN0 EXECUTOR</span>
+      </a>
+      <a class="back-link" href="../">← Back to home</a>
+    </header>
+
+    <div class="content">
+      <section class="intro" aria-labelledby="page-title">
+        <div class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Your workspace preview</div>
+        <h1 id="page-title"><span>Meet Xen0 Executor.</span></h1>
+        <p>A clean, focused executor interface designed to keep your sessions simple and your workflow in control.</p>
+      </section>
+
+      <section class="glass-panel preview-panel" aria-label="Xen0 Executor interface preview">
+        <div class="preview-heading">
+          <strong>Executor preview</strong>
+          <span>Interface concept</span>
+        </div>
+        <div class="app-preview" role="img" aria-label="Dark executor app interface with Home, Execution, ScriptHub and Settings navigation, a code editor, and execution controls">
+          <aside class="sidebar">
+            <div class="app-logo" aria-hidden="true">✦</div>
+            <nav class="app-nav" aria-label="Preview navigation">
+              <div class="active"><span class="nav-icon" aria-hidden="true">◆</span>Home</div>
+              <div><span class="nav-icon" aria-hidden="true">‹ ›</span>Execution</div>
+              <div><span class="nav-icon" aria-hidden="true">▤</span>ScriptHub</div>
+              <div><span class="nav-icon" aria-hidden="true">⚙</span>Settings</div>
+            </nav>
+          </aside>
+          <div class="workspace">
+            <div class="window-bar" aria-hidden="true"><span class="window-dot"></span><span class="window-dot"></span></div>
+            <div class="tabbar"><div class="tab"><span class="tab-dot" aria-hidden="true"></span>untitled<span class="tab-close" aria-hidden="true">×</span></div></div>
+            <div class="editor"><span class="line-number">1</span><span class="code-fn">print</span>(<span class="code-string">"Xen0 Executor"</span>)<span class="cursor" aria-hidden="true"></span></div>
+            <div class="toolbar" aria-hidden="true">
+              <span class="tool-button">Save File</span><span class="tool-button">Open File</span><span class="tool-button">Clear</span><span class="tool-button">Execute</span><span class="tool-button attach">Attach</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="glass-panel download-panel" aria-labelledby="download-title">
+        <div>
+          <p class="section-kicker">Get started</p>
+          <h2 id="download-title">Ready to download?</h2>
+          <p class="download-copy">Join the Xen0 Executor Discord to access the download.</p>
+        </div>
+        <a class="button" href="https://discord.gg/SUytWUH7d" target="_blank" rel="noopener noreferrer">
+          Download Xen0 Executor <span aria-hidden="true">↗</span>
+        </a>
+      </section>
+    </div>
   </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAEpolGgoosGDg-Wf2o849HHl4jm1-Ngyc",
+      authDomain: "xen0-executor.firebaseapp.com",
+      projectId: "xen0-executor",
+      storageBucket: "xen0-executor.firebasestorage.app",
+      messagingSenderId: "829021934051",
+      appId: "1:829021934051:web:1a7edc1f8da77ffdb290d6",
+      measurementId: "G-M7CFMPL88L"
+    };
+
+    const auth = getAuth(initializeApp(firebaseConfig));
+    const destination = "/download/";
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        document.getElementById("authCheck").hidden = true;
+        document.getElementById("downloadContent").hidden = false;
+      } else {
+        window.location.replace(`/login/?next=${encodeURIComponent(destination)}`);
+      }
+    });
+  </script>
 </body>
 </html>
