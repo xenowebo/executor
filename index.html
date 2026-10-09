@@ -219,14 +219,9 @@ h1 #executorName {
   gap: 12px;
 }
 
- .hero-actions .button {
-  width: 240px;
+.hero-actions .button {
   min-height: 51px;
   padding-inline: 24px;
-}
-
-.download-button {
-  width: 240px;
 }
 
 .glass-panel {
@@ -738,7 +733,6 @@ const EXECUTOR_NAME = "Xen0 Executor";
 const EXECUTOR_DESCRIPTION =
   "A refined, dependable execution experience—built for speed, clarity, and complete control of your workflow.";
 
-const DOWNLOAD_URL = "download/";
 document.title = `${EXECUTOR_NAME} — Executor`;
 
 document.getElementById("executorName").textContent = EXECUTOR_NAME;
@@ -748,10 +742,6 @@ document.getElementById("brandName").textContent =
 
 document.getElementById("description").textContent =
   EXECUTOR_DESCRIPTION;
-
-document.getElementById("downloadButton").addEventListener("click", () => {
-  window.location.href = DOWNLOAD_URL;
-});
 
 document.getElementById("year").textContent =
   new Date().getFullYear();
@@ -776,6 +766,16 @@ document.getElementById("year").textContent =
     const accountLink = document.getElementById("accountLink");
     const logoutButton = document.getElementById("logoutButton");
     const signupLink = document.getElementById("signupLink");
+    const downloadButton = document.getElementById("downloadButton");
+
+    downloadButton.addEventListener("click", () => {
+      const destination = "/download/";
+      if (auth.currentUser) {
+        window.location.assign(destination);
+      } else {
+        window.location.assign(`/login/?next=${encodeURIComponent(destination)}`);
+      }
+    });
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
